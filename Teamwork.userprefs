@@ -1,0 +1,16 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/gameController.cs">
+    <Files>
+      <File FileName="Assets/gameController.cs" Line="96" Column="1" />
+      <File FileName="Assets/startScreen.cs" Line="23" Column="5" />
+      <File FileName="Assets/endScreen.cs" Line="27" Column="46" />
+      <File FileName="Assets/cubeScript.cs" Line="18" Column="20" />
+      <File FileName="../Transportation/Transportation/Assets/OverwatchControl.cs" Line="89" Column="71" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
