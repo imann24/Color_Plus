@@ -109,8 +109,11 @@ public class gameController : MonoBehaviour {
 		if (checkNumKeys() && keyPressedDown == false)	
 		{
 			cubes[randomColumn(), int.Parse(Input.inputString)].transform.renderer.material.color = nextCubeColor;	
-			keyPressedDown = true;
-			
+			keyPressedDown = true;	
+		}
+		if (countdownTimer < 0)
+		{
+			Application.LoadLevel("endScreen");	
 		}
 	}
 	public bool checkNumKeys(){
