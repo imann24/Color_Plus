@@ -19,6 +19,7 @@ public class gameController : MonoBehaviour {
 	public static int totalScore;
 	public int randomNumber;
 	public int keypadInputNum;
+	public int lowTime = 11;
 	public float mainTimer;
 	public float countdownTimer = 60;
 	public bool plusFormation;
@@ -28,6 +29,7 @@ public class gameController : MonoBehaviour {
 	public static bool gameWin;
 	public float cubeXPoint;
 	public float cubeYPoint;
+	public GUIStyle myButtonColor;
 	
 	// Use this for initialization
 	void Start () 
@@ -43,6 +45,9 @@ public class gameController : MonoBehaviour {
 		}
 		
 		nextCube = (GameObject) Instantiate (NextCube, new Vector3 (7, -2, 0), Quaternion.identity);
+		
+		nextCube.transform.renderer.material.color = Color.green;
+		nextCubeColor = Color.green;
 		
 		cubeColor = new Color[numColors];
 		cubeColor [0] = Color.black;
@@ -66,10 +71,13 @@ public class gameController : MonoBehaviour {
 	void OnGUI () 
 	{
 		// Make a background box
+		if (countdownTimer < lowTime)
+			{
+				myButtonColor.normal.textColor = Color.red;
+			}
 		GUI.Box(new Rect(10,10,100,30), "Score:" + totalScore.ToString());
 		GUI.Box(new Rect(375, 315, 100, 30), "Next Cube" );
-		GUI.Box(new Rect(10, 60, 100, 30), "Timer:" + (int) countdownTimer);
-		
+		GUI.Box(new Rect(10, 60, 100, 30), "Timer:" + (int) countdownTimer, myButtonColor);
 	}
 	
 	
@@ -170,7 +178,7 @@ public class gameController : MonoBehaviour {
 	//public void processClickedCube (GameObject ClickedCube, Color  colorPassedIn)
 	public void processClickedCube(GameObject clickedCube)
 	{
-		if (clickedCube.transform.renderer.material.color != Color.magenta && activeCube)
+		if (clickedCube.transform.renderer.material.color == Color.white && activeCube)
 		{
 			clickedCube.transform.renderer.material.color = tempColor;
 			cubes[(int) cubeXPoint/2, (int) cubeYPoint/2].transform.renderer.material.color = Color.white;
@@ -182,14 +190,17 @@ public class gameController : MonoBehaviour {
 			clickedCube.transform.renderer.material.color = tempColor;
 			activeCube = false;
 		}
-		
-		else
+		else if (clickedCube.transform.renderer.material.color != Color.white && activeCube == false)
 		{
 			tempColor = clickedCube.transform.renderer.material.color;
 			cubeXPoint = clickedCube.transform.position.x;
 			cubeYPoint = clickedCube.transform.position.y;
 			clickedCube.renderer.material.color = Color.magenta;
 			activeCube = true;
+		}
+		else
+		{
+			clickedCube.transform.renderer.material.color = Color.white;
 		}
 	}
 	
