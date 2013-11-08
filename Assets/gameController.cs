@@ -24,6 +24,7 @@ public class gameController : MonoBehaviour {
 	public bool plusFormation;
 	public bool activeCube = false;
 	public bool destroyedCube = false;
+	public bool keyPressedDown = false;
 	public static bool gameWin;
 	public float cubeXPoint;
 	public float cubeYPoint;
@@ -88,10 +89,13 @@ public class gameController : MonoBehaviour {
 		//turn loop
 		if (mainTimer > turnTime)
 		{
+			if (keyPressedDown == false)
+			{
+				Destroy(cubes [Random.Range(0,7), Random.Range (0,4)]);	
+			}
+			keyPressedDown = false;
 			nextCube.transform.renderer.material.color = changeColor();
 			nextCubeColor = nextCube.transform.renderer.material.color;
-			Destroy(cubes [Random.Range(0,7), Random.Range (0,4)]);
-			
 			mainTimer = 0;
 		}
 		
@@ -102,9 +106,11 @@ public class gameController : MonoBehaviour {
 	
 		/*string keypadInput = Input.inputString();
 		print (int.parse(keypadInput));*/
-		if (checkNumKeys())	
+		if (checkNumKeys() && keyPressedDown == false)	
 		{
-			cubes[randomColumn(), int.Parse(Input.inputString)].transform.renderer.material.color = nextCubeColor;		
+			cubes[randomColumn(), int.Parse(Input.inputString)].transform.renderer.material.color = nextCubeColor;	
+			keyPressedDown = true;
+			
 		}
 	}
 	public bool checkNumKeys(){
@@ -187,7 +193,7 @@ public class gameController : MonoBehaviour {
 	//chooses and random number (1-5) and returns it (to assign the y coordinate of where "NextCube" moves to	
 	public int randomColumn ()
 	{
-		randomNumber = Random.Range(1,5);
+		randomNumber = Random.Range(0,8);
 		return randomNumber;
 	}
 		
