@@ -22,7 +22,7 @@ public class gameController : MonoBehaviour {
 	public int lowTime = 11;
 	public float mainTimer;
 	public float countdownTimer = 60;
-	public bool plusFormation;
+	public bool plusFormation = false;
 	public bool activeCube = false;
 	public bool destroyedCube = false;
 	public bool keyPressedDown = false;
@@ -99,7 +99,7 @@ public class gameController : MonoBehaviour {
 		{
 			if (keyPressedDown == false)
 			{
-				Destroy(cubes [Random.Range(0,7), Random.Range (0,4)]);	
+				Destroy(findACube(Random.Range(0,7), Random.Range (0,4)));	
 			}
 			keyPressedDown = false;
 			nextCube.transform.renderer.material.color = changeColor();
@@ -116,13 +116,27 @@ public class gameController : MonoBehaviour {
 		print (int.parse(keypadInput));*/
 		if (checkNumKeys() && keyPressedDown == false)	
 		{
+			if (cubes[randomColumn(), minusOne()] != null)
+			{
 			cubes[randomColumn(), minusOne()].transform.renderer.material.color = nextCubeColor;	
 			keyPressedDown = true;	
+			}
+			
+			else
+			{
+			cubes[randomColumn() + 1, minusOne()].transform.renderer.material.color = nextCubeColor;	
+			keyPressedDown = true;	
+			}
 		}
 		if (countdownTimer < 0)
 		{
 			Application.LoadLevel("endScreen");	
 		}
+		
+		if (detectPlus())
+		{
+			totalScore += 5;	
+		}		
 	}
 	
 
@@ -164,18 +178,31 @@ public class gameController : MonoBehaviour {
 		{
 			for (int y = 1; y < (numCubesVert-1); y++)
 			{
-				if (cubes [x, y].transform.renderer.material.color == cubes [x+1, y+1].transform.renderer.material.color&&
-					cubes [x, y].transform.renderer.material.color == cubes [x-1, y-1].transform.renderer.material.color&&
-					cubes [x, y].transform.renderer.material.color == cubes [x+1, y-1].transform.renderer.material.color&&
-					cubes [x, y].transform.renderer.material.color == cubes [x-1, y+1].transform.renderer.material.color)
+				if (cubes[x,y].transform.renderer.material.color != Color.white)
+				{
+					if (cubes [x, y].transform.renderer.material.color == cubes [x+1, y+1].transform.renderer.material.color&&
+						cubes [x, y].transform.renderer.material.color == cubes [x-1, y-1].transform.renderer.material.color&&
+						cubes [x, y].transform.renderer.material.color == cubes [x+1, y-1].transform.renderer.material.color&&
+						cubes [x, y].transform.renderer.material.color == cubes [x-1, y+1].transform.renderer.material.color)
 					{
 						plusFormation = true;	
 					}
-				else 
+					else 
 					{
 						plusFormation = false;
 					}
 				}
+			}
+		}
+			int i = (int) (this.gameObject.transform.position.x)/2;
+			int e =  (int) (this.gameObject.transform.position.x)/2;
+			if (plusFormation)
+			{
+				cubes [i, e].transform.renderer.material.color = Color.grey;
+				cubes [i-1, e-1].transform.renderer.material.color = Color.grey;
+				cubes [i+1, e-1].transform.renderer.material.color = Color.grey;
+				cubes [i-1, e+1].transform.renderer.material.color = Color.grey;
+				cubes [i+1, e+1].transform.renderer.material.color = Color.grey;
 			}
 		return plusFormation;
 	}
@@ -224,16 +251,19 @@ public class gameController : MonoBehaviour {
 	{
 		return cubeColor[Random.Range(0,4)];	
 	}
-	
-	public int keypadInput ()
+	public GameObject findACube (int x, int y)
 	{
-		for (int i = 1; i < limitKeyNum; i++)
+		x = Random.Range (0,7);
+		y = Random.Range (0,4);
+		if (cubes[x,y] != null && cubes[x,y].transform.renderer.material.color == Color.white)
 		{
-			if (Input.GetKeyDown(numInput[i]))
-			{
-				keypadInputNum = i;
-			}
+			return cubes[x,y];
 		}
-		return keypadInputNum;
+		else 
+		{
+			findACube(Random.Range (0,7), Random.Range (0,4));
+			return cubes [x,y];
+		}
+	
 	}
 }
