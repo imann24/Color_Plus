@@ -116,7 +116,7 @@ public class gameController : MonoBehaviour {
 		print (int.parse(keypadInput));*/
 		if (checkNumKeys() && keyPressedDown == false)	
 		{
-			cubes[randomColumn(), int.Parse(Input.inputString)].transform.renderer.material.color = nextCubeColor;	
+			cubes[randomColumn(), minusOne()].transform.renderer.material.color = nextCubeColor;	
 			keyPressedDown = true;	
 		}
 		if (countdownTimer < 0)
@@ -124,7 +124,15 @@ public class gameController : MonoBehaviour {
 			Application.LoadLevel("endScreen");	
 		}
 	}
-	public bool checkNumKeys(){
+	
+
+	public int minusOne ()
+	{
+		int numKeyPressed = int.Parse(Input.inputString);
+		return numKeyPressed - 1;
+	}	
+	public bool checkNumKeys()
+	{
 	if (Input.inputString == "1")
 		{
 		return true;	
