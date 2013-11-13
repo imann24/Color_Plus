@@ -9,7 +9,7 @@ public class cubeScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		activateScript = GameObject.Find("GameController").GetComponent<gameController>();
+	
 	}
 	
 	// Update is called once per frame
@@ -28,5 +28,10 @@ public class cubeScript : MonoBehaviour {
 		{
 			activateScript.processClickedCube(gameObject);
 		}
+	}
+	
+	void OnMouseOver ()
+	{
+						
 	}
 }

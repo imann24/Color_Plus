@@ -20,6 +20,9 @@ public class gameController : MonoBehaviour {
 	public int randomNumber;
 	public int keypadInputNum;
 	public int lowTime = 11;
+	public int numWhiteCubes;
+	public int foundX;
+	public int foundY;
 	public float mainTimer;
 	public float countdownTimer = 60;
 	public bool plusFormation = false;
@@ -34,6 +37,7 @@ public class gameController : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
+		numWhiteCubes = numCubesHor * numCubesVert;
 		cubes = new GameObject[numCubesHor, numCubesVert];
 		for (int x = 0; x < numCubesHor; x++)
 		{
@@ -97,9 +101,29 @@ public class gameController : MonoBehaviour {
 		//turn loop
 		if (mainTimer > turnTime)
 		{
+			// if no key was pressed during the turn
 			if (keyPressedDown == false)
 			{
-				Destroy(findACube(Random.Range(0,7), Random.Range (0,4)));	
+				// try and find a random white cube to destroy
+				GameObject cubeToDestroy = null;
+				
+				// keep trying as long as there is at least one white cube
+				while (cubeToDestroy == null && numWhiteCubes > 0) {
+					cubeToDestroy = findACube(Random.Range(0,numCubesHor), Random.Range (0,numCubesVert));
+				}
+				
+				// if we found a valid white cube
+				if (cubeToDestroy != null) {
+					cubeToDestroy.renderer.enabled = false;
+					numWhiteCubes--;
+				}
+				else {
+					// end the game
+					
+					
+				}
+				
+				
 			}
 			keyPressedDown = false;
 			nextCube.transform.renderer.material.color = changeColor();
@@ -114,17 +138,21 @@ public class gameController : MonoBehaviour {
 	
 		/*string keypadInput = Input.inputString();
 		print (int.parse(keypadInput));*/
+		
+		//checks for number input and whether a color has already been distributed this turn
 		if (checkNumKeys() && keyPressedDown == false)	
 		{
-			if (cubes[randomColumn(), minusOne()] != null)
+			//checks whether the random cube is null
+			if (cubes[randomColumn(), getIndexFromString()] != null)
 			{
-			cubes[randomColumn(), minusOne()].transform.renderer.material.color = nextCubeColor;	
+			//if not it assigns the "next cube" color to it
+			cubes[randomColumn(), getIndexFromString()].transform.renderer.material.color = nextCubeColor;	
 			keyPressedDown = true;	
 			}
 			
 			else
 			{
-			cubes[randomColumn() + 1, minusOne()].transform.renderer.material.color = nextCubeColor;	
+			cubes[randomColumn() + Random.Range (1,2), getIndexFromString()].transform.renderer.material.color = nextCubeColor;	
 			keyPressedDown = true;	
 			}
 		}
@@ -133,14 +161,14 @@ public class gameController : MonoBehaviour {
 			Application.LoadLevel("endScreen");	
 		}
 		
-		if (detectPlus())
+		if (processPlus())
 		{
 			totalScore += 5;	
 		}		
 	}
 	
 
-	public int minusOne ()
+	public int getIndexFromString ()
 	{
 		int numKeyPressed = int.Parse(Input.inputString);
 		return numKeyPressed - 1;
@@ -172,39 +200,45 @@ public class gameController : MonoBehaviour {
 		return false;
 		}
 	}
-	public bool detectPlus ()
+	
+	public bool detectRainbowPlus (int x, int y) 
+	{
+		return false;		
+	}
+	
+	//detecting a "+" of all the same color 
+	public bool processPlus ()
 	{	
-		for (int x = 1; x < (numCubesHor-1); x++)
+		//check each cube
+		foundX = -1;
+		foundY = -1;
+		for (int x = 1; x < numCubesHor-1; x++)
 		{
-			for (int y = 1; y < (numCubesVert-1); y++)
+			for (int y = 1; y < numCubesVert-1; y++)
 			{
 				if (cubes[x,y].transform.renderer.material.color != Color.white)
 				{
-					if (cubes [x, y].transform.renderer.material.color == cubes [x+1, y+1].transform.renderer.material.color&&
-						cubes [x, y].transform.renderer.material.color == cubes [x-1, y-1].transform.renderer.material.color&&
-						cubes [x, y].transform.renderer.material.color == cubes [x+1, y-1].transform.renderer.material.color&&
-						cubes [x, y].transform.renderer.material.color == cubes [x-1, y+1].transform.renderer.material.color)
+					if (DetectSolidColorPlus(x, y))
 					{
-						plusFormation = true;	
+						foundX = x;
+						foundY = y;
 					}
-					else 
-					{
-						plusFormation = false;
-					}
+					
 				}
 			}
 		}
-			int i = (int) (this.gameObject.transform.position.x)/2;
-			int e =  (int) (this.gameObject.transform.position.x)/2;
-			if (plusFormation)
-			{
-				cubes [i, e].transform.renderer.material.color = Color.grey;
-				cubes [i-1, e-1].transform.renderer.material.color = Color.grey;
-				cubes [i+1, e-1].transform.renderer.material.color = Color.grey;
-				cubes [i-1, e+1].transform.renderer.material.color = Color.grey;
-				cubes [i+1, e+1].transform.renderer.material.color = Color.grey;
-			}
-		return plusFormation;
+		
+		// if we found a valid cube
+		if (foundX != -1)
+		{
+			//make them grey
+			greyOutCubes ();
+			return true;
+		}
+		else 
+		{
+			return false;	
+		}
 	}
 	
 	//detects when the cubes are aligned in a "+" formation (same color, or all colors)
@@ -242,28 +276,48 @@ public class gameController : MonoBehaviour {
 	//chooses and random number (1-5) and returns it (to assign the y coordinate of where "NextCube" moves to	
 	public int randomColumn ()
 	{
-		randomNumber = Random.Range(0,8);
+		randomNumber = Random.Range(0,numCubesHor);
 		return randomNumber;
 	}
 		
 	//chooses a random number in the color array and returns a color 
 	public Color changeColor () 
 	{
-		return cubeColor[Random.Range(0,4)];	
+		return cubeColor[Random.Range(0,numCubesVert)];	
 	}
 	public GameObject findACube (int x, int y)
 	{
-		x = Random.Range (0,7);
-		y = Random.Range (0,4);
-		if (cubes[x,y] != null && cubes[x,y].transform.renderer.material.color == Color.white)
+	
+		if (cubes[x,y].transform.renderer.enabled && cubes[x,y].transform.renderer.material.color == Color.white)
 		{
 			return cubes[x,y];
 		}
 		else 
 		{
-			findACube(Random.Range (0,7), Random.Range (0,4));
-			return cubes [x,y];
+			return null;
 		}
+	}
+	public void greyOutCubes ()
+	{
+		cubes [foundX, foundY].transform.renderer.material.color = Color.grey;
+		cubes [foundX-1, foundY-1].transform.renderer.material.color = Color.grey;
+		cubes [foundX+1, foundY-1].transform.renderer.material.color = Color.grey;
+		cubes [foundX-1, foundY+1].transform.renderer.material.color = Color.grey;
+		cubes [foundX+1, foundY+1].transform.renderer.material.color = Color.grey;
+	}
 	
+	public bool DetectSolidColorPlus (int x, int y)
+	{
+		if (cubes [x, y].transform.renderer.material.color == cubes [x+1, y+1].transform.renderer.material.color&&
+			cubes [x, y].transform.renderer.material.color == cubes [x-1, y-1].transform.renderer.material.color&&
+			cubes [x, y].transform.renderer.material.color == cubes [x+1, y-1].transform.renderer.material.color&&
+			cubes [x, y].transform.renderer.material.color == cubes [x-1, y+1].transform.renderer.material.color)
+			{
+				return true;
+			}
+		else
+		{
+			return false; 	
+		}
 	}
 }
