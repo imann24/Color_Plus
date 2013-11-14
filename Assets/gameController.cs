@@ -11,7 +11,7 @@ public class gameController : MonoBehaviour {
 	public int numCubesHor = 8;
 	public int numCubesVert = 5;
 	public int numColors = 5;
-	public float turnTime = 2;
+	public float turnTime = 7;
 	public int nextCubeNum = 1;
 	public int limitKeyNum = 6;
 	public GameObject WhiteCube; 
@@ -24,7 +24,7 @@ public class gameController : MonoBehaviour {
 	public int foundX;
 	public int foundY;
 	public float mainTimer;
-	public float countdownTimer = 60;
+	public float countdownTimer = 600;
 	public bool plusFormation = false;
 	public bool activeCube = false;
 	public bool destroyedCube = false;
@@ -33,6 +33,7 @@ public class gameController : MonoBehaviour {
 	public float cubeXPoint;
 	public float cubeYPoint;
 	public GUIStyle myButtonColor;
+	public static Input inputString;
 	
 	// Use this for initialization
 	void Start () 
@@ -86,53 +87,30 @@ public class gameController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		
+		//the game and turn timers
 		countdownTimer -= Time.deltaTime;
 		mainTimer += Time.deltaTime;
-		//check for the "+" arrangment of cubes
-		//spawn "NextCube"
-		//destroy a bock if no number input is pressed 
-		//number key input
-		//ends game if timer expires
-		//ends game if there are no available cubes 
-		//upon end game, load "endScreen" (different "Load Level") 
-		//turn loop
+
+
 		if (mainTimer > turnTime)
 		{
-			// if no key was pressed during the turn
-			if (keyPressedDown == false)
-			{
-				// try and find a random white cube to destroy
-				GameObject cubeToDestroy = null;
-				cubeToDestroy = findAValidCube (Random.Range(0, numCubesHor), Random.Range(0, numCubesVert));
-				// keep trying as long as there is at least one white cube
-
-				// if we found a valid white cube
-				if (cubeToDestroy != null) {
-					cubeToDestroy.renderer.enabled = false;
-					numWhiteCubes--;
-				}
-				else 
-				{
-					// end the game
-					Application.LoadLevel("endScreen");	
-				}
-			}
+			//destroy cubes method
+			destroyACube();		
+			//reset the ability to press a key for the next turn
 			keyPressedDown = false;
+			//get a random color for next cube
 			nextCube.transform.renderer.material.color = changeColor();
+			//place next cube's color into the random color distribution method: triggered upon keypad input
 			nextCubeColor = nextCube.transform.renderer.material.color;
+			//reset turn timer to 0
 			mainTimer = 0;
 		}
-		
+		//trigger the victory condition, if score has increased (to be displayed on the endScreen)
 		if (totalScore > 0)
 		{
 			gameWin = true;
 		}	
-	
-		/*string keypadInput = Input.inputString();
-		print (int.parse(keypadInput));*/
-		
-		//checks for number input and whether a color has already been distributed this turn
+		//checks for number input and haven't already pressed a key
 		if (checkNumKeys() && keyPressedDown == false)	
 		{
 			//checks whether the random cube is null
@@ -147,7 +125,6 @@ public class gameController : MonoBehaviour {
 		{
 			Application.LoadLevel("endScreen");	
 		}
-		processPlus();
 		if (processPlus())
 		{
 			totalScore += 10;	
@@ -156,15 +133,23 @@ public class gameController : MonoBehaviour {
 
 	public int getIndexFromString ()
 	{
-		int numKeyPressed = int.Parse(Input.inputString);
-		return numKeyPressed - 1;
+		int numKeyPressed;
+		if (Input.inputString != null)
+		{
+			numKeyPressed = int.Parse(Input.inputString);
+			return numKeyPressed - 1;
+		}
+		else
+		{
+			return 0;
+		}
 	}	
 	//returns true if any of the number keys 1-5 are pressed
 	public bool checkNumKeys()
 	{
-	if (Input.inputString == "1")
+		if (Input.inputString == "1")
 		{
-		return true;	
+			return true;	
 		}
 	if (Input.inputString == "2")
 		{
@@ -182,10 +167,10 @@ public class gameController : MonoBehaviour {
 		{
 		return true;	
 		}
-	else 
-		{
+	
+
 		return false;
-		}
+
 	}
 	
 	public bool detectRainbowPlus (int x, int y) 
@@ -281,7 +266,8 @@ public class gameController : MonoBehaviour {
 	//chooses a random number in the color array and returns a color 
 	public Color changeColor () 
 	{
-		return cubeColor[Random.Range(0,numCubesVert)];	
+		//return cubeColor[Random.Range(0,numCubesVert)];	
+		return cubeColor[0];	
 	}
 	//locates a white cube or returns null
 	public bool checkValid (int x, int y)
@@ -298,18 +284,21 @@ public class gameController : MonoBehaviour {
 	public void greyOutCubes ()
 	{
 		cubes [foundX, foundY].transform.renderer.material.color = Color.grey;
-		cubes [foundX-1, foundY-1].transform.renderer.material.color = Color.grey;
-		cubes [foundX+1, foundY-1].transform.renderer.material.color = Color.grey;
-		cubes [foundX-1, foundY+1].transform.renderer.material.color = Color.grey;
-		cubes [foundX+1, foundY+1].transform.renderer.material.color = Color.grey;
+		cubes [foundX-1, foundY].transform.renderer.material.color = Color.grey;
+		cubes [foundX+1, foundY].transform.renderer.material.color = Color.grey;
+		cubes [foundX, foundY+1].transform.renderer.material.color = Color.grey;
+		cubes [foundX, foundY-1].transform.renderer.material.color = Color.grey;
+
+
 	}
+
 	//returs true if all the cubes in the "+" formation are the same color as the cube at the center of the formation
 	public bool detectSolidColorPlus (int x, int y)
 	{
-		if (cubes [x, y].transform.renderer.material.color == cubes [x+1, y+1].transform.renderer.material.color&&
-			cubes [x, y].transform.renderer.material.color == cubes [x-1, y-1].transform.renderer.material.color&&
-			cubes [x, y].transform.renderer.material.color == cubes [x+1, y-1].transform.renderer.material.color&&
-			cubes [x, y].transform.renderer.material.color == cubes [x-1, y+1].transform.renderer.material.color)
+		if (cubes [x, y].transform.renderer.material.color == cubes [x+1, y].transform.renderer.material.color&&
+			cubes [x, y].transform.renderer.material.color == cubes [x-1, y].transform.renderer.material.color&&
+			cubes [x, y].transform.renderer.material.color == cubes [x, y-1].transform.renderer.material.color&&
+			cubes [x, y].transform.renderer.material.color == cubes [x, y+1].transform.renderer.material.color)
 			{
 				return true;
 			}
@@ -341,4 +330,26 @@ public class gameController : MonoBehaviour {
 			}
 			return validCube;
 		}
+	public void destroyACube ()
+	{
+		// if no key was pressed during the turn
+		if (keyPressedDown == false)
+		{
+			// try and find a random white cube to destroy
+			GameObject cubeToDestroy = null;
+			cubeToDestroy = findAValidCube (Random.Range(0, numCubesHor), Random.Range(0, numCubesVert));
+			// keep trying as long as there is at least one white cube
+			
+			// if we found a valid white cube
+			if (cubeToDestroy != null) {
+				cubeToDestroy.renderer.enabled = false;
+				numWhiteCubes--;
+			}
+			else 
+			{
+				// end the game
+				Application.LoadLevel("endScreen");	
+			}
+		}
+	}
 }
