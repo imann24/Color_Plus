@@ -1,11 +1,12 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/gameController.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\endScreen.cs">
     <Files>
-      <File FileName="Assets/cubeScript.cs" Line="1" Column="1" />
-      <File FileName="Assets/endScreen.cs" Line="1" Column="1" />
-      <File FileName="Assets/startScreen.cs" Line="1" Column="1" />
-      <File FileName="Assets/gameController.cs" Line="71" Column="32" />
+      <File FileName="Assets\gameController.cs" Line="86" Column="2" />
+      <File FileName="Assets\startScreen.cs" Line="21" Column="62" />
+      <File FileName="Assets\cubeScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\gameController.cs" Line="97" Column="5" />
+      <File FileName="Assets\endScreen.cs" Line="32" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

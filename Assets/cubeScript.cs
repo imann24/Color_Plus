@@ -15,7 +15,7 @@ public class cubeScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-	
+
 	}
 	
 	void OnMouseEnter() {
@@ -31,4 +31,5 @@ public class cubeScript : MonoBehaviour {
 	//reference to process in the "gameController" script: changes cube color, activates/deactivates cubes
 		activateScript.processClickedCube(gameObject);
 	}
+
 }
