@@ -29,7 +29,7 @@ public class gameController : MonoBehaviour {
 	public float cubeXPoint;
 	public float cubeYPoint;
 	
-	// Use this for initialization
+	// Use this for initialization	
 	void Start () 
 	{
 		cubes = new GameObject[numCubesHor, numCubesVert];
@@ -217,4 +217,5 @@ public class gameController : MonoBehaviour {
 		}
 		return keypadInputNum;
 	}
+	
 }

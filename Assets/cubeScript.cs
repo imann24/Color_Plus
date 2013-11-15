@@ -4,6 +4,7 @@ using System.Collections;
 public class cubeScript : MonoBehaviour {
 	
 	gameController activateScript;
+	private Color startcolor;
 	
 	// Use this for initialization
 	void Start () 
@@ -15,6 +16,14 @@ public class cubeScript : MonoBehaviour {
 	void Update () 
 	{
 	
+	}
+	
+	void OnMouseEnter() {
+    	startcolor = renderer.material.color;
+    	gameObject.transform.renderer.material.color = Color.grey;
+	}
+	void OnMouseExit() {
+		renderer.material.color = startcolor;
 	}
 	
 	void OnMouseDown ()
